@@ -76,18 +76,16 @@ $nova_user		 = 'nova'
 $nova_db_password        = 'nova_pass'
 $nova_user_password      = 'nova_pass'
 $glance_db_password      = 'glance_pass'
+$quantum_db_password     = 'quantum_pass'
 $glance_user_password    = 'glance_pass'
 $glance_sql_connection   = "mysql://glance:${glance_db_password}@${controller_node_address}/glance"
 $glance_on_swift         = false
 $rabbit_password         = 'openstack_rabbit_password'
 $rabbit_user             = 'openstack_rabbit_user'
-#$floating_ip_range       = '172.29.74.254/32'
 # Nova DB connection
 $sql_connection 	 = "mysql://${nova_user}:${nova_db_password}@${controller_node_address}/nova"
 # Switch this to true to have all service log at verbose
 $verbose                 = false
-# by default it does not enable atomatically adding floating IPs
-#$auto_assign_floating_ip = false
 #### end shared variables #################
 
 ####### Adding Core Configuration and Cobbler Nodes Definition #####
@@ -126,8 +124,41 @@ cobbler::node { "compute01":
  preseed 	=> "cisco-preseed",
  }
 
+cobbler::node { "compute02":
+ mac            => "A4:4C:11:13:A7:F1",
+ ip             => "192.168.220.52",
+ ### UCS CIMC Details ###
+ power_address  => "192.168.220.5",
+ power_user     => "admin",
+ power_password => "password",
+ power_type     => "ipmitool",
+ ### Advanced Users Configuration ###
+ profile        => "precise-x86_64-auto",
+ domain         => $::domain_name,
+ node_type      => "compute",
+ preseed        => "cisco-preseed",
+ }
+
+cobbler::node { "compute03":
+ mac            => "A4:4C:11:13:43:DB",
+ ip             => "192.168.220.53",
+ ### UCS CIMC Details ###
+ power_address  => "192.168.220.6",
+ power_user     => "admin",
+ power_password => "password",
+ power_type     => "ipmitool",
+ ### Advanced Users Configuration ###
+ profile        => "precise-x86_64-auto",
+ domain         => $::domain_name,
+ node_type      => "compute",
+ preseed        => "cisco-preseed",
+ }
+
 ### Repeat as needed ###
 }
 node control03 inherits control { }
 node compute01 inherits compute { }
+node compute02 inherits compute { }
+node compute03 inherits compute { }
+
 ### Repeat as needed ###
